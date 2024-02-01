@@ -17,22 +17,37 @@ public class EmpleadoRepository implements CRUD<Empleado>{
     @Override
     public void crear(Empleado empleado) {
         Transaction trx = session.beginTransaction();
-        session.save(empleado);
+        session.persist(empleado);
         trx.commit();
     }
 
     @Override
     public void remove(Empleado empleado) {
-
+        Transaction trx = session.beginTransaction();
+        session.remove(empleado);
+        trx.commit();
     }
 
     @Override
     public void update(Empleado empleado) {
-
+        Transaction trx = session.beginTransaction();
+        session.update(empleado);
+        trx.commit();
     }
 
     @Override
     public List<Empleado> findAll() {
-        return null;
+        Transaction trx = session.beginTransaction();
+        List<Empleado> empleados = (List<Empleado>) session.createQuery("SELECT e FROM Empleado e").getResultList();
+        trx.commit();
+        return empleados;
     }
+
+    public Empleado findEmpleadoByDni(String dni){
+        Transaction trx = session.beginTransaction();
+        Empleado empleado = (Empleado) session.createQuery("SELECT e FROM Empleado e WHERE e.dni = :dni").setParameter("dni",dni).getSingleResult();
+        trx.commit();
+        return empleado;
+    }
+
 }

@@ -15,6 +15,7 @@ import java.util.List;
 public class Empleado {
     @Id
     @Column(name = "dni",columnDefinition = "char(9)")
+    @NonNull
     private String dni;
     @NonNull
     @Column(name = "nombre")
@@ -32,5 +33,7 @@ public class Empleado {
     private void addProyecto(Proyecto proyecto){
         proyectos.add(proyecto);
     }
+
+
 
 }
