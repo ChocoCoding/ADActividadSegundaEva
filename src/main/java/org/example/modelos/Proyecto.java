@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,11 +29,14 @@ public class Proyecto {
     @NonNull
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
-
     @OneToMany(mappedBy = "proyecto")
-    private List<EmpleadoProyecto> listaEmpleadosProyectos;
-
+    private List<EmpleadoProyecto> listaEmpleadosProyectos= new ArrayList<>();
+    @NonNull
     @ManyToOne
     @JoinColumn(name = "dni_jefe_proyecto", columnDefinition = "char(9)")
     private Empleado jefe;
+
+    public void asignarEmpleadosProyecto(EmpleadoProyecto empleadoProyecto){
+        this.listaEmpleadosProyectos.add(empleadoProyecto);
+    }
 }

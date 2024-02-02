@@ -1,9 +1,7 @@
 package org.example.view;
 
 import jakarta.persistence.EntityExistsException;
-import org.example.modelos.Categorias;
-import org.example.modelos.DatosProfesionales;
-import org.example.modelos.Empleado;
+import org.example.modelos.*;
 import org.example.repositorios.DatosProfesionalesRepository;
 import org.example.repositorios.EmpleadoProyectoRepository;
 import org.example.repositorios.EmpleadoRepository;
@@ -15,6 +13,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -77,10 +76,27 @@ public class Menu {
 
             switch (opt){
                 case 1:
+                    crearProyecto();
 
             }
 
         } while (opt != 0);
+    }
+
+    private void crearProyecto() {
+        String nombre = Utilidades.pedirString("Introduce el nombre del proyecto");
+        LocalDate fechaInicio = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de inicio en el siguiente formato: DD-MM-YYYY"));
+        LocalDate fechaFin = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de finalizacion en el siguiente formato: DD-MM-YYYY"));
+        Empleado jefe = empleadoRepository.findEmpleadoByDni(Utilidades.pedirPalabra("Introduce el DNI del jefe del proyecto"));
+
+
+        Proyecto proyecto = new Proyecto(nombre,fechaInicio,fechaFin,jefe);
+        EmpleadoProyecto empleadoProyecto = new EmpleadoProyecto(jefe,proyecto,fechaInicio,fechaFin);
+        proyecto.asignarEmpleadosProyecto(empleadoProyecto);
+        jefe.addProyecto(proyecto);
+        proyectoRepository.crear(proyecto);
+        empleadoProyectoRepository.crear(empleadoProyecto);
+
     }
 
 
@@ -101,8 +117,7 @@ public class Menu {
             switch (opt){
                 case 1:
                     crearEmpleadoOEmpleadoPlantilla();
-
-
+                    break;
             }
 
         } while (opt != 0);

@@ -1,6 +1,8 @@
 package org.example.utilities;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 public class Utilidades {
@@ -28,6 +30,12 @@ public class Utilidades {
         Scanner sc = new Scanner(System.in);
         System.out.println(mensaje);
         return (char) sc.nextInt();
+    }
+
+    public static LocalDate parsearFecha(String fecha){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return LocalDate.parse(fecha,formatter);
+
     }
 
 }

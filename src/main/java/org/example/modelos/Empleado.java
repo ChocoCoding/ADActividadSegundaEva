@@ -4,6 +4,7 @@ package org.example.modelos;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class Empleado {
     @Id
     @Column(name = "dni",columnDefinition = "char(9)")
@@ -21,15 +23,15 @@ public class Empleado {
     private String nombre;
 
     @OneToMany(mappedBy = "empleado")
-    private List<EmpleadoProyecto> listaEmpleadosProyectos;
+    private List<EmpleadoProyecto> listaEmpleadosProyectos = new ArrayList<>();
 
     @OneToOne(mappedBy = "empleadoPlantilla")
     private DatosProfesionales datosProfesionales;
 
     @OneToMany(mappedBy = "jefe")
-    private List<Proyecto> proyectos;
+    private List<Proyecto> proyectos= new ArrayList<>();
 
-    private void addProyecto(Proyecto proyecto){
+    public void addProyecto(Proyecto proyecto){
         proyectos.add(proyecto);
     }
 
