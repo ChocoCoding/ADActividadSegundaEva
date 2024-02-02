@@ -12,7 +12,6 @@ import java.sql.Types;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class DatosProfesionales {
     @Id
     @OneToOne

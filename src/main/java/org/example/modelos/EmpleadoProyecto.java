@@ -11,7 +11,6 @@ import java.util.Date;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class EmpleadoProyecto {
 
     @ManyToOne

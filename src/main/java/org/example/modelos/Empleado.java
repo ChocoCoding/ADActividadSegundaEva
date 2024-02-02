@@ -11,7 +11,6 @@ import java.util.List;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class Empleado {
     @Id
     @Column(name = "dni",columnDefinition = "char(9)")

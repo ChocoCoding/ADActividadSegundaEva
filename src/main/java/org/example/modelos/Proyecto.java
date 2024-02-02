@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class Proyecto {
 
     @Id
