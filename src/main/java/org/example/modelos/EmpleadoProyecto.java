@@ -11,6 +11,8 @@ import java.util.Date;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"empleado","proyecto"})
+@NoArgsConstructor
 public class EmpleadoProyecto {
 
     @ManyToOne

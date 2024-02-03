@@ -50,4 +50,11 @@ public class ProyectoRepository implements CRUD<Proyecto>{
         trx.commit();
         return proyecto;
     }
+
+    public void cambiarJefeProyecto(Empleado empleado, int id){
+
+
+
+    }
+
 }

@@ -14,6 +14,8 @@ import java.util.List;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"listaEmpleadosProyectos","jefe"})
+@NoArgsConstructor
 public class Proyecto {
 
     @Id
@@ -31,12 +33,27 @@ public class Proyecto {
     private LocalDate fechaFin;
     @OneToMany(mappedBy = "proyecto")
     private List<EmpleadoProyecto> listaEmpleadosProyectos= new ArrayList<>();
-    @NonNull
+
     @ManyToOne
     @JoinColumn(name = "dni_jefe_proyecto", columnDefinition = "char(9)")
     private Empleado jefe;
 
+    public Proyecto(String nombre, LocalDate fechaInicio, LocalDate fechaFin, Empleado jefe) {
+        this.nombre = nombre;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.jefe = jefe;
+    }
+
     public void asignarEmpleadosProyecto(EmpleadoProyecto empleadoProyecto){
         this.listaEmpleadosProyectos.add(empleadoProyecto);
+    }
+
+    public void eliminarEmpleadosProyectos(EmpleadoProyecto empleadoProyecto){
+        this.listaEmpleadosProyectos.remove(empleadoProyecto);
+    }
+
+    public void eliminarJefe(){
+        this.setJefe(null);
     }
 }

@@ -1,5 +1,7 @@
 package org.example.repositorios;
 
+import jakarta.persistence.Query;
+import org.example.modelos.Empleado;
 import org.example.modelos.EmpleadoProyecto;
 import org.example.modelos.Proyecto;
 import org.hibernate.Session;
@@ -41,5 +43,24 @@ public class EmpleadoProyectoRepository implements CRUD<EmpleadoProyecto>{
         List<EmpleadoProyecto> empleadoProyectos = this.session.createQuery("SELECT ep FROM EmpleadoProyecto ep").getResultList();
         trx.commit();
         return empleadoProyectos;
+    }
+
+    public List<EmpleadoProyecto> findAsignacionesByDni(String dni){
+        Transaction trx = session.beginTransaction();
+        List<EmpleadoProyecto> empleadoProyecto = (List<EmpleadoProyecto>) session.createQuery("SELECT ep FROM EmpleadoProyecto ep WHERE ep.empleado.dni=: dni").setParameter("dni",dni).getResultList();
+        trx.commit();
+        return empleadoProyecto;
+    }
+
+
+    public EmpleadoProyecto findAsignacionEmpleadoProyecto(String dni,int id){
+        Transaction trx = session.beginTransaction();
+        Query query = session.createQuery("SELECT ep FROM EmpleadoProyecto ep WHERE ep.empleado.dni=: dni AND ep.proyecto.id =: id");
+        query.setParameter("dni",dni);
+        query.setParameter("id",id);
+
+        EmpleadoProyecto empleadoProyecto = (EmpleadoProyecto) query.getSingleResult();
+        trx.commit();
+        return empleadoProyecto;
     }
 }

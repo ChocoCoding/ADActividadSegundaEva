@@ -32,6 +32,12 @@ public class Utilidades {
         return (char) sc.nextInt();
     }
 
+    public static int pedirInt(String mensaje){
+        Scanner sc = new Scanner(System.in);
+        System.out.println(mensaje);
+        return sc.nextInt();
+    }
+
     public static LocalDate parsearFecha(String fecha){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         return LocalDate.parse(fecha,formatter);

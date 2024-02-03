@@ -12,6 +12,8 @@ import java.sql.Types;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(exclude = {"empleadoPlantilla"})
 public class DatosProfesionales {
     @Id
     @OneToOne
