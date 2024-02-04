@@ -145,31 +145,58 @@ public class Menu {
     }
 
     private void modificarProyecto() {
-        Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce el ID del proyecto a modificar"));
-        LocalDate fechaFin;
-        String nombre = Utilidades.pedirString("Introduce el nuevo nombre del proyecto");
-        sc = new Scanner(System.in);
+        try {
+            Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce el ID del proyecto a modificar"));
+            LocalDate fechaFin;
+            String nombre;
 
-        LocalDate fechaInicio = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la nueva fecha de inicio"));
-        do{
-            fechaFin = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de finalizacion en el siguiente formato: DD-MM-YYYY"));
-            if (!Validaciones.comprobarFechaFinMayorFechaIni(fechaInicio,fechaFin)){
-                System.out.println("La fecha fin debe ser mayor que la fecha de inicio");
-            }
-        }while(!Validaciones.comprobarFechaFinMayorFechaIni(fechaInicio,fechaFin));
+            do {
+                nombre = Utilidades.pedirString("Introduce el nuevo nombre del proyecto");
+                sc = new Scanner(System.in);
+                if (!Validaciones.validarNombre(nombre)){
+                    System.out.println("-Máximo 35 caracteres");
+                    System.out.println("-El nombre debe contener al menos 1 letra");
+                    System.out.println("-El nombre no debe contener numeros");
+                }
+            }while (!Validaciones.validarNombre(nombre));
 
-        proyecto.setNombre(nombre);
-        proyecto.setFechaInicio(fechaInicio);
-        proyecto.setFechaFin(fechaFin);
-        proyectoRepository.update(proyecto);
+
+            LocalDate fechaInicio = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la nueva fecha de inicio"));
+            do{
+                fechaFin = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de finalizacion en el siguiente formato: DD-MM-YYYY"));
+                if (!Validaciones.comprobarFechaFinMayorFechaIni(fechaInicio,fechaFin)){
+                    System.out.println("La fecha fin debe ser mayor que la fecha de inicio");
+                }
+            }while(!Validaciones.comprobarFechaFinMayorFechaIni(fechaInicio,fechaFin));
+
+            proyecto.setNombre(nombre);
+            proyecto.setFechaInicio(fechaInicio);
+            proyecto.setFechaFin(fechaFin);
+            proyectoRepository.update(proyecto);
+        }catch (NoResultException nre){
+            System.out.println("El proyecto no existe");
+        }catch (InputMismatchException ime){
+            System.out.println("El dato introducido no es correcto");
+        }catch (DateTimeParseException dtpe){
+            System.out.println("El formato de fecha debe ser: [dd-mm-YYYY]");
+        }
 
 
     }
 
     private void crearProyecto() {
         LocalDate fechaFin;
+        String nombre;
         try {
-            String nombre = Utilidades.pedirString("Introduce el nombre del proyecto");
+            nombre = Utilidades.pedirString("Introduce  nombre del proyecto");
+            sc = new Scanner(System.in);
+            do{
+            if (!Validaciones.validarNombre(nombre)){
+                System.out.println("-Máximo 35 caracteres");
+                System.out.println("-El nombre debe contener al menos 1 letra");
+                System.out.println("-El nombre no debe contener numeros");
+            }
+        }while (!Validaciones.validarNombre(nombre));
             LocalDate fechaInicio = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de inicio en el siguiente formato: DD-MM-YYYY"));
             do{
                 fechaFin = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de finalizacion en el siguiente formato: DD-MM-YYYY"));
@@ -201,10 +228,13 @@ public class Menu {
             System.out.println("El nombre del proyecto no debe exceder los 35 caracteres");
         }catch (NoResultException nre){
             System.out.println("No existe el empleado con ese DNI");
+        }catch (InputMismatchException ime){
+            System.out.println("El dato introducido no es correcto");
         }
     }
 
     private void eliminarProyecto(){
+        try {
         int id = Utilidades.pedirInt("Introduce el id del proyecto a eliminar");
 
         Proyecto proyecto = proyectoRepository.findProyectoByid(id);
@@ -219,9 +249,6 @@ public class Menu {
 
         //Lista de proyectos en las que es jefe del proyecto
         Empleado jefe = proyecto.getJefe();
-
-
-        //Desvinculamos el proyecto del jefe
 
 
         for (int x = asignacionesLadoProyecto.size() -1; x >= 0; x--){
@@ -241,10 +268,16 @@ public class Menu {
         empleadoRepository.update(jefe);
 
         proyectoRepository.remove(proyecto);
-
+        }catch (InputMismatchException ime){
+            System.out.println("El dato introducido no es correcto");
+        }catch (NoResultException nre){
+            System.out.println("No existe el proyecto");
+        }
     }
 
     public void cambiarJefeProyecto(){
+
+        try {
         int id = Utilidades.pedirInt("Introduce la id del proyecto");
         Proyecto proyecto = proyectoRepository.findProyectoByid(id);
         Empleado jefe = proyecto.getJefe();
@@ -282,6 +315,14 @@ public class Menu {
         proyecto.setJefe(empleado);
         empleadoRepository.update(empleado);
         proyectoRepository.update(proyecto);
+
+        }catch (InputMismatchException ime){
+            System.out.println("El dato introducido no es correcto");
+        }catch (NoResultException nre){
+            System.out.println("ERROR,puede ser por las siguientes razones: ");
+            System.out.println("No existe el empleado");
+            System.out.println("No existe el proyecto");
+        }
 
     }
 
@@ -509,6 +550,8 @@ public class Menu {
             System.out.println("Los valores decimales deben ir separados por '.' [20000.4]");
         }catch (NoResultException nre){
             System.out.println("El dni introducido no existe");
+        }catch (DateTimeParseException dtpe){
+            System.out.println("El formato de fecha debe ser: [dd-mm-YYYY]");
         }
     }
 

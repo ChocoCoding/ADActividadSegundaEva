@@ -6,12 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="bf91d347-2670-4d6e-9080-a2ae01219897" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/modelos/DatosProfesionales.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/modelos/DatosProfesionales.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/modelos/Proyecto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/modelos/Proyecto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repositorios/EmpleadoProyectoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/repositorios/EmpleadoProyectoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/repositorios/EmpleadoRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/repositorios/EmpleadoRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utilities/Utilidades.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utilities/Utilidades.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/example/utilities/Validaciones.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/utilities/Validaciones.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/example/view/Menu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/example/view/Menu.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
