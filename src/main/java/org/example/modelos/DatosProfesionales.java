@@ -29,4 +29,12 @@ public class DatosProfesionales {
     @Enumerated(EnumType.STRING)
     private Categorias categorias;
 
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Sueldo bruto: ").append(sueldoBruto).append("\n");
+        sb.append("Categoria: ").append(categorias.name()).append("\n");
+        return sb.toString();
+    }
 }

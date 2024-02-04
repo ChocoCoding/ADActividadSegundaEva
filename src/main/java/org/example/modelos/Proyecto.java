@@ -31,6 +31,7 @@ public class Proyecto {
     @NonNull
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
+
     @OneToMany(mappedBy = "proyecto")
     private List<EmpleadoProyecto> listaEmpleadosProyectos= new ArrayList<>();
 
@@ -55,5 +56,15 @@ public class Proyecto {
 
     public void eliminarJefe(){
         this.setJefe(null);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Proyecto: ").append(idProyecto).append("\n");
+        sb.append("id: ").append(idProyecto).append("\n");
+        sb.append("Nombre: ").append(nombre).append("\n");
+        sb.append("FechaInicio: ").append(fechaInicio).append("\n");
+        sb.append("FechaFin: ").append(fechaFin).append("\n");
+        return sb.toString();
     }
 }

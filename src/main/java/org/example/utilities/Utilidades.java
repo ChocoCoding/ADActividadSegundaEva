@@ -41,7 +41,6 @@ public class Utilidades {
     public static LocalDate parsearFecha(String fecha){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         return LocalDate.parse(fecha,formatter);
-
     }
 
 }

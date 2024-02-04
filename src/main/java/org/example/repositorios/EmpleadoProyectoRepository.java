@@ -58,8 +58,14 @@ public class EmpleadoProyectoRepository implements CRUD<EmpleadoProyecto>{
         Query query = session.createQuery("SELECT ep FROM EmpleadoProyecto ep WHERE ep.empleado.dni=: dni AND ep.proyecto.id =: id");
         query.setParameter("dni",dni);
         query.setParameter("id",id);
-
         EmpleadoProyecto empleadoProyecto = (EmpleadoProyecto) query.getSingleResult();
+        trx.commit();
+        return empleadoProyecto;
+    }
+
+    public List<EmpleadoProyecto> findAsignacionesById(int id){
+        Transaction trx = session.beginTransaction();
+        List<EmpleadoProyecto> empleadoProyecto = (List<EmpleadoProyecto>) session.createQuery("SELECT ep FROM EmpleadoProyecto ep WHERE ep.proyecto.id=: id").setParameter("id",id).getResultList();
         trx.commit();
         return empleadoProyecto;
     }

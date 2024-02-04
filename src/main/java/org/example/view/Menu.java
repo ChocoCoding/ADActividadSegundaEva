@@ -23,6 +23,7 @@ import java.util.Scanner;
 
 public class Menu {
     Session session;
+    Scanner sc = new Scanner(System.in);
 
     public Menu(Session session) {
     this.session = session;
@@ -32,7 +33,7 @@ public class Menu {
     private DatosProfesionalesRepository datosProfesionalesRepository;
     private EmpleadoProyectoRepository empleadoProyectoRepository;
     private ProyectoRepository proyectoRepository;
-    Validaciones validaciones;
+
 
     public void dialog(){
 
@@ -42,37 +43,12 @@ public class Menu {
     empleadoProyectoRepository = new EmpleadoProyectoRepository(session);
     proyectoRepository = new ProyectoRepository(session);
 
-
-    int opt = 1;
-        do {
-        System.out.println("\n********************** Bienvenido a Empleados-Proyectos *****************************");
-        System.out.println("\n\t1. Gestionar Empleados.\t\t\t\t\t2. Gestionar Proyectos.");
-        System.out.println("\n\t0. Salir.");
-        System.out.println("\n*************************************************************************************");
-        scanner = new Scanner(System.in);
-        System.out.println("Introduce un opcion");
-        opt = scanner.nextInt();
-
-        switch (opt){
-            case 1:
-                gestionarEmpleados();
-                break;
-            case 2:
-                gestionarProyectos();
-                break;
-        }
-    } while (opt != 0);
-
-}
-
-    private void gestionarProyectos() {
-        Scanner scanner = new Scanner(System.in);
+    try {
         int opt = 1;
         do {
-            System.out.println("\n********************** Gestión de Proyectos *****************************");
-            System.out.println("\n\t1. Crear Proyecto.\t\t\t\t\t\t4. Cambiar el jefe de un proyecto.");
-            System.out.println("\n\t2. Modificar Proyecto.\t\t\t\t\t5. Mostrar los datos de un proyecto.");
-            System.out.println("\n\t3. Eliminar Proyecto.\t\t\t\t\t0. Salir.");
+            System.out.println("\n********************** Bienvenido a Empleados-Proyectos *****************************");
+            System.out.println("\n\t1. Gestionar Empleados.\t\t\t\t\t2. Gestionar Proyectos.");
+            System.out.println("\n\t0. Salir.");
             System.out.println("\n*************************************************************************************");
             scanner = new Scanner(System.in);
             System.out.println("Introduce un opcion");
@@ -80,14 +56,114 @@ public class Menu {
 
             switch (opt){
                 case 1:
-                    crearProyecto();
+                    gestionarEmpleados();
                     break;
-                case 4:
-                    cambiarJefeProyecto();
+                case 2:
+                    gestionarProyectos();
+                    break;
+                default:
+                    System.out.println("La opcion no existe, los valores deben ser del [0 - 3]");
                     break;
             }
-
         } while (opt != 0);
+    }catch (InputMismatchException ime){
+        System.out.println("ERROR!! Los valores deben ser del [0 - 3]");
+        dialog();
+    }
+
+
+}
+
+    private void gestionarProyectos() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            int opt = 1;
+            do {
+                System.out.println("\n********************** Gestión de Proyectos *****************************");
+                System.out.println("\n\t1. Crear Proyecto.\t\t\t\t\t\t4. Cambiar el jefe de un proyecto.");
+                System.out.println("\n\t2. Modificar Proyecto.\t\t\t\t\t5. Mostrar los datos de un proyecto.");
+                System.out.println("\n\t3. Eliminar Proyecto.\t\t\t\t\t0. Salir.");
+                System.out.println("\n*************************************************************************************");
+                scanner = new Scanner(System.in);
+                System.out.println("Introduce un opcion");
+                opt = scanner.nextInt();
+
+                switch (opt){
+                    case 1:
+                        crearProyecto();
+                        break;
+                    case 2:
+                        modificarProyecto();
+                        break;
+                    case 3:
+                        eliminarProyecto();
+                        break;
+                    case 4:
+                        cambiarJefeProyecto();
+                        break;
+                    case 5:
+                        mostrarDatosProyecto();
+                        break;
+                    default:
+                        System.out.println("La opcion no existe, los valores deben ser del [0 - 5]");
+                        break;
+                }
+            } while (opt != 0);
+        }catch (InputMismatchException ime){
+            System.out.println("ERROR!! Los valores deben ser del [0 - 5]");
+            gestionarProyectos();
+        }
+
+    }
+
+    private void mostrarDatosProyecto() {
+        try {
+            Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce el ID del proyecto a mostrar"));
+            System.out.println("Datos proyecto");
+            System.out.println(proyecto.toString());
+            System.out.println();
+
+            //Mostramos los empleados asignados:
+            System.out.println("Empleados: ");
+            for (EmpleadoProyecto ep: proyecto.getListaEmpleadosProyectos()){
+                System.out.println("DNI empleado: "+ ep.getEmpleado().getNombre());
+                System.out.println("DNI empleado: "+ ep.getEmpleado().getDni());
+                System.out.println("Fecha inicio empleado: "+ ep.getFechaInicio());
+                System.out.println("Fecha fin empleado: "+ ep.getFechaFin());
+            }
+
+            System.out.println("Jefe de proyecto: ");
+            System.out.println("Nombre: "+ proyecto.getJefe().getNombre());
+            System.out.println("DNI Jefe: "+ proyecto.getJefe().getDni());
+            System.out.println(proyecto.getJefe().getDatosProfesionales());
+            System.out.println();
+        }catch (NoResultException nre){
+            System.out.println("El proyecto seleccionado no existe");
+        }
+
+
+    }
+
+    private void modificarProyecto() {
+        Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce el ID del proyecto a modificar"));
+        LocalDate fechaFin;
+        String nombre = Utilidades.pedirString("Introduce el nuevo nombre del proyecto");
+        sc = new Scanner(System.in);
+
+        LocalDate fechaInicio = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la nueva fecha de inicio"));
+        do{
+            fechaFin = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de finalizacion en el siguiente formato: DD-MM-YYYY"));
+            if (!Validaciones.comprobarFechaFinMayorFechaIni(fechaInicio,fechaFin)){
+                System.out.println("La fecha fin debe ser mayor que la fecha de inicio");
+            }
+        }while(!Validaciones.comprobarFechaFinMayorFechaIni(fechaInicio,fechaFin));
+
+        proyecto.setNombre(nombre);
+        proyecto.setFechaInicio(fechaInicio);
+        proyecto.setFechaFin(fechaFin);
+        proyectoRepository.update(proyecto);
+
+
     }
 
     private void crearProyecto() {
@@ -129,79 +205,146 @@ public class Menu {
     }
 
     private void eliminarProyecto(){
-        Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce el id del proyecto a eliminar"));
+        int id = Utilidades.pedirInt("Introduce el id del proyecto a eliminar");
+
+        Proyecto proyecto = proyectoRepository.findProyectoByid(id);
+        //Asignaciones lado proyectos
+        List<EmpleadoProyecto> asignacionesLadoProyecto = proyecto.getListaEmpleadosProyectos();
+
+        //Asignacion lado empleado
+        List<EmpleadoProyecto> asignacionesLadoEmpleado = proyecto.getListaEmpleadosProyectos();
+
+        //Asignaciones
+        List<EmpleadoProyecto> asignacionesDelProyecto = empleadoProyectoRepository.findAsignacionesById(id);
+
+        //Lista de proyectos en las que es jefe del proyecto
+        Empleado jefe = proyecto.getJefe();
+
+
+        //Desvinculamos el proyecto del jefe
+
+
+        for (int x = asignacionesLadoProyecto.size() -1; x >= 0; x--){
+            proyecto.getListaEmpleadosProyectos().remove(asignacionesDelProyecto.get(x));
+            empleadoProyectoRepository.remove(asignacionesDelProyecto.get(x));
+        }
+
+        for (int x = asignacionesLadoEmpleado.size() -1; x >= 0; x--){
+            if (asignacionesLadoEmpleado.get(x).getProyecto().getIdProyecto() == id){
+                proyecto.getJefe().getListaEmpleadosProyectos().remove(asignacionesLadoEmpleado.get(x));
+                empleadoProyectoRepository.remove(asignacionesLadoEmpleado.get(x));
+            }
+        }
+
+        //Desvinculamos el proyecto del jefe
+        jefe.getProyectos().remove(proyecto);
+        empleadoRepository.update(jefe);
+
+        proyectoRepository.remove(proyecto);
 
     }
 
-
     public void cambiarJefeProyecto(){
-        Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce la id del proyecto"));
-        Empleado empleado = empleadoRepository.findEmpleadoByDni(Utilidades.pedirPalabra("Introduce el DNI del nuevo Jefe"));
-        EmpleadoProyecto empleadoProyecto = empleadoProyectoRepository.findAsignacionEmpleadoProyecto(proyecto.getJefe().getDni(),proyecto.getIdProyecto());
+        int id = Utilidades.pedirInt("Introduce la id del proyecto");
+        Proyecto proyecto = proyectoRepository.findProyectoByid(id);
+        Empleado jefe = proyecto.getJefe();
+        String dni = Utilidades.pedirPalabra("Introduce el DNI del nuevo jefe");
+        Empleado empleado = empleadoRepository.findEmpleadoByDni(dni);
 
+        //Eliminamos las asignaciones al jefe
+        for (int x = jefe.getListaEmpleadosProyectos().size() -1; x >= 0; x--){
+            if (jefe.getListaEmpleadosProyectos().get(x).getEmpleado().getDni().equals(jefe.getDni()) && jefe.getListaEmpleadosProyectos().get(x).getProyecto().getIdProyecto() == (proyecto.getIdProyecto())){
+                //empleado.getListaEmpleadosProyectos().remove(jefe.getListaEmpleadosProyectos().get(x));
+                empleadoProyectoRepository.remove(jefe.getListaEmpleadosProyectos().get(x));
+            }
 
-        empleadoProyecto.setEmpleado(empleado);
-        empleado.addlistEmpleadosProyectos(empleadoProyecto);
-        proyecto.asignarEmpleadosProyecto(empleadoProyecto);
+        }
 
-        System.out.println("Estoy aqui");
+        //Eliminamos las asignaciones al proyecto
+        for (int x = proyecto.getListaEmpleadosProyectos().size() -1; x >= 0; x--){
+            if (proyecto.getListaEmpleadosProyectos().get(x).getEmpleado().getDni().equals(jefe.getNombre()) && proyecto.getListaEmpleadosProyectos().get(x).getProyecto().getIdProyecto() == (proyecto.getIdProyecto())){
+                //proyecto.getListaEmpleadosProyectos().remove(proyecto.getListaEmpleadosProyectos().get(x));
+                empleadoProyectoRepository.remove(proyecto.getListaEmpleadosProyectos().get(x));
+            }
+        }
+
+        //Creamos la nueva asignacion
+        EmpleadoProyecto empleadoProyecto = new EmpleadoProyecto(empleado,proyecto,proyecto.getFechaInicio(),proyecto.getFechaFin());
+        EmpleadoProyecto empleadoProyecto1 = empleadoProyectoRepository.findAsignacionEmpleadoProyecto(empleado.getDni(),proyecto.getIdProyecto());
+        if (!empleadoProyecto1.getEmpleado().getDni().equals(empleadoProyecto.getEmpleado().getDni()) && empleadoProyecto1.getProyecto().getIdProyecto() == empleadoProyecto.getProyecto().getIdProyecto()){
+            empleado.addlistEmpleadosProyectos(empleadoProyecto);
+            proyecto.asignarEmpleadosProyecto(empleadoProyecto);
+            empleadoProyectoRepository.crear(empleadoProyecto);
+        }
+
+        //Cambiamos al jefe de proyecto
+        jefe.getProyectos().remove(proyecto);
         proyecto.setJefe(empleado);
+        empleadoRepository.update(empleado);
         proyectoRepository.update(proyecto);
 
     }
 
     public void gestionarEmpleados(){
-        Scanner scanner = new Scanner(System.in);
-        int opt = 1;
-        do {
-            System.out.println("\n************************************ Gestión de empleados ****************************************");
-            System.out.println("\n\t1. Crear Empleado.\t\t\t\t\t\t5. Quitar un empleado de un proyecto.");
-            System.out.println("\n\t2. Modificar Empleado.\t\t\t\t\t6. Mostrar datos empleados en plantilla.");
-            System.out.println("\n\t3. Eliminar Empleado.\t\t\t\t\t7. Mostrar los Jefes de Proyecto.");
-            System.out.println("\n\t4. Asignar Empleado a proyecto.\t\t\t0. SALIR.");
-            System.out.println("\n***************************************************************************************************");
-            scanner = new Scanner(System.in);
-            System.out.println("Introduce un opcion");
-            opt = scanner.nextInt();
+        try {
+            Scanner scanner = new Scanner(System.in);
+            int opt = 1;
+            do {
+                System.out.println("\n************************************ Gestión de empleados ****************************************");
+                System.out.println("\n\t1. Crear Empleado.\t\t\t\t\t\t5. Quitar un empleado de un proyecto.");
+                System.out.println("\n\t2. Modificar Empleado.\t\t\t\t\t6. Mostrar datos empleados en plantilla.");
+                System.out.println("\n\t3. Eliminar Empleado.\t\t\t\t\t7. Mostrar los Jefes de Proyecto.");
+                System.out.println("\n\t4. Asignar Empleado a proyecto.\t\t\t0. SALIR.");
+                System.out.println("\n***************************************************************************************************");
+                scanner = new Scanner(System.in);
+                System.out.println("Introduce un opcion");
+                opt = scanner.nextInt();
 
-            switch (opt){
-                case 1:
-                    crearEmpleadoOEmpleadoPlantilla();
-                    break;
-                case 2:
-                    modificarEmpleado();
-                    break;
-                case 3:
-                    borrarEmpleado();
-                    break;
-                case 4:
-                    asignarEmpleadoAProyecto();
-                    break;
-                case 5:
-                    quitarEmpleadoDeProyecto();
-                    break;
-                case 6:
-                    mostrarDatosEmpleadosPlantilla();
-                    break;
-                case 7:
-                    mostrarEmpleadosJefes();
-                    break;
-            }
+                switch (opt){
+                    case 1:
+                        crearEmpleadoOEmpleadoPlantilla();
+                        break;
+                    case 2:
+                        modificarEmpleado();
+                        break;
+                    case 3:
+                        borrarEmpleado();
+                        break;
+                    case 4:
+                        asignarEmpleadoAProyecto();
+                        break;
+                    case 5:
+                        quitarEmpleadoDeProyecto();
+                        break;
+                    case 6:
+                        mostrarDatosEmpleadosPlantilla();
+                        break;
+                    case 7:
+                        mostrarEmpleadosJefes();
+                        break;
+                    default:
+                        System.out.println("La opcion no existe, los valores deben ser del [0 - 7]");
+                        break;
+                }
 
-        } while (opt != 0);
-
+            } while (opt != 0);
+        }catch (InputMismatchException ime){
+            System.out.println("ERROR!! Los valores deben ser del [0 - 7]");
+            gestionarEmpleados();
+        }
     }
-
 
     private void mostrarEmpleadosJefes() {
         List<Empleado> empleados = empleadoRepository.findAll();
         for(Empleado e: empleados){
                 if (!e.getProyectos().isEmpty()){
-                    System.out.println(e);
+                    for (int x = e.getProyectos().size() -1; x >= 0; x--){
+                        System.out.println("Jefe del proyecto: " + e.getProyectos().get(x).getNombre());
+                        System.out.println(e);
+                    }
                 }
         }
     }
-
 
     private void mostrarDatosEmpleadosPlantilla() {
         List<Empleado> empleados = empleadoRepository.findAll();
@@ -214,22 +357,41 @@ public class Menu {
     }
 
     private void quitarEmpleadoDeProyecto() {
+        try{
         Empleado empleado = empleadoRepository.findEmpleadoByDni(Utilidades.pedirPalabra("Introduce el dni del empleado que quieres quitar proyecto"));
         Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce la ID del proyecto"));
         EmpleadoProyecto empleadoProyecto = empleadoProyectoRepository.findAsignacionEmpleadoProyecto(empleado.getDni(),proyecto.getIdProyecto());
 
-        empleado.eliminarEmpleadosProyectos(empleadoProyecto);
-        proyecto.eliminarEmpleadosProyectos(empleadoProyecto);
+        if (Validaciones.comprobarSiUnEmpleadoEsJefeDeUnProyecto(empleado,proyecto)){
+            System.out.println("No se puede quitar al jefe del proyecto");
+            System.out.println("Para cambiar al jefe vaya a: Gestionar proyectos > Cambiar el jefe de un proyecto");
+        }else {
+            empleado.eliminarEmpleadosProyectos(empleadoProyecto);
+            proyecto.eliminarEmpleadosProyectos(empleadoProyecto);
 
-        empleadoProyectoRepository.remove(empleadoProyecto);
-        empleadoRepository.update(empleado);
-        proyectoRepository.update(proyecto);
+            empleadoProyectoRepository.remove(empleadoProyecto);
+            empleadoRepository.update(empleado);
+            proyectoRepository.update(proyecto);
+        }
+
+        }catch (NoResultException nre){
+            System.out.println("ERROR, pueden ser las siguientes razones:");
+            System.out.println("-El empleado no existe");
+            System.out.println("-El proyecto no existe");
+            System.out.println("-El empleado no esta asignado a ese proyecto");
+        }
+
     }
 
-
     private void asignarEmpleadoAProyecto(){
-        Empleado empleado = empleadoRepository.findEmpleadoByDni(Utilidades.pedirPalabra("Introduce el dni del empleado que quieres agregar al proyecto"));
-        Proyecto proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce la ID del proyecto"));
+        Empleado empleado = null;
+        Proyecto proyecto = null;
+        try {
+            empleado = empleadoRepository.findEmpleadoByDni(Utilidades.pedirPalabra("Introduce el dni del empleado que quieres agregar al proyecto"));
+
+
+            proyecto = proyectoRepository.findProyectoByid(Utilidades.pedirInt("Introduce la ID del proyecto"));
+
         LocalDate fechaFin;
         LocalDate fechaInicio = Utilidades.parsearFecha(Utilidades.pedirPalabra("Introduce la fecha de inicio en el siguiente formato: DD-MM-YYYY"));
         do{
@@ -241,12 +403,20 @@ public class Menu {
 
         EmpleadoProyecto empleadoProyecto = new EmpleadoProyecto(empleado,proyecto,fechaInicio,fechaFin);
 
-        empleado.addlistEmpleadosProyectos(empleadoProyecto);
-        proyecto.asignarEmpleadosProyecto(empleadoProyecto);
+        //Comprobamos que el empleado no este ya en ese proyecto
+        if (Validaciones.comprobarEmpleadoEstaEnProyecto(empleado,empleadoProyecto)){
+            System.out.println("El empleado ya esta asignado a ese proyecto");
+        }else {
+            empleado.addlistEmpleadosProyectos(empleadoProyecto);
+            proyecto.asignarEmpleadosProyecto(empleadoProyecto);
 
-        empleadoProyectoRepository.crear(empleadoProyecto);
-        empleadoRepository.update(empleado);
-        proyectoRepository.update(proyecto);
+            empleadoProyectoRepository.crear(empleadoProyecto);
+            empleadoRepository.update(empleado);
+            proyectoRepository.update(proyecto);
+        }
+        }catch (NoResultException nre){
+            System.out.println("El empleado o el proyecto no existen");
+        }
     }
 
     private void modificarEmpleado() {
@@ -256,7 +426,18 @@ public class Menu {
             String categoria = "";
             String sueldoStr;
             BigDecimal sueldo = null;
-            String nombre = Utilidades.pedirPalabra("Introduce el nuevo nombre del empleado");
+            String nombre;
+            do {
+                nombre = Utilidades.pedirString("Introduce el nuevo nombre del empleado");
+                sc = new Scanner(System.in);
+                if (!Validaciones.validarNombre(nombre)){
+                    System.out.println("-Máximo 35 caracteres");
+                    System.out.println("-El nombre debe contener al menos 1 letra");
+                    System.out.println("-El nombre no debe contener numeros");
+                }
+            }while (!Validaciones.validarNombre(nombre));
+
+            //Comprobamos si no es un empleado de plantilla
             if (empleado.getDatosProfesionales() == null){
                 String ans = Utilidades.pedirPalabra("¿Quieres añadir al empleado a la plantilla? SI/NO");
                 if (ans.equalsIgnoreCase("SI")){
@@ -277,6 +458,7 @@ public class Menu {
                         }
                     }while (!Validaciones.comprobarSueldo(String.valueOf(sueldoStr)));
 
+                    assert sueldo != null;
                     DatosProfesionales datosProfesionales = new DatosProfesionales(empleado,sueldo,Categorias.valueOf(categoria));
 
                     empleado.setNombre(nombre);
@@ -322,37 +504,79 @@ public class Menu {
 
                 System.out.println("Se ha actualizado el empleado con dni: " + empleado.getDni());
             }
-        }catch (ConstraintViolationException | EntityExistsException cve){
-            System.out.println("Ese dni ya esta registrado");
-            crearEmpleadoOEmpleadoPlantilla();
         }catch (InputMismatchException ime){
             System.out.println("El dato introducido no es correcto");
             System.out.println("Los valores decimales deben ir separados por '.' [20000.4]");
-            crearEmpleadoOEmpleadoPlantilla();
+        }catch (NoResultException nre){
+            System.out.println("El dni introducido no existe");
         }
     }
 
     private void borrarEmpleado() {
-        String dni = Utilidades.pedirPalabra("Introduce el DNI del empleado que quieres borrar: ");
+        try {
+            String dni = Utilidades.pedirPalabra("Introduce el DNI del empleado que quieres borrar: ");
         //Seleccionamos el empleado
         Empleado empleado = empleadoRepository.findEmpleadoByDni(dni);
         //Cogemos sus datos profesionales
-        DatosProfesionales datosProfesionales = datosProfesionalesRepository.findByDni(dni);
+        DatosProfesionales datosProfesionales = empleado.getDatosProfesionales();
         //Buscamos las asignaciones de ese empleado
-        List<EmpleadoProyecto> asignacionesEmpleado = empleadoProyectoRepository.findAsignacionesByDni(dni);
+        List<EmpleadoProyecto> asignacionesEmpleado = empleado.getListaEmpleadosProyectos();
         System.out.println("Asignaciones empleados " + asignacionesEmpleado.size());
         //Buscamos los proyectos en los que es jefe
         List<Proyecto> proyectos = empleado.getProyectos();
         System.out.println("Proyectos en los que es jefe: " + proyectos.size());
+        //TablaAsinaciones
+        List<EmpleadoProyecto> asignaciones = empleadoProyectoRepository.findAsignacionesByDni(dni);
 
-        //Eliminamos la relacion     Empleado - jefe - Proyecto
+
+        //Eliminamos la relacion del lado de Proyectos
         for(int x = proyectos.size() -1 ; x >= 0 ; x--){
-            proyectos.get(x).setJefe(null);
-            proyectos.remove(proyectos.get(x));
+            List<EmpleadoProyecto> listaEmpPro = proyectos.get(x).getListaEmpleadosProyectos();
+            //for (x = 0; x < listaEmpPro.size(); x++){
+            for (int i = listaEmpPro.size() -1; i >= 0; i--){
+                if (listaEmpPro.get(x).getEmpleado().getDni().equalsIgnoreCase(dni)){
+                    empleadoProyectoRepository.remove(listaEmpPro.get(x));
+                }
+            }
         }
+
+        for (int x = asignaciones.size() -1; x >=0 ; x--){
+            empleadoProyectoRepository.remove(asignaciones.get(x));
+        }
+
+
+        //Eliminamos la relacion del lado empleado
+        for (int x = 0; x < empleado.getListaEmpleadosProyectos().size(); x++){
+            if (empleado.getListaEmpleadosProyectos().get(x).getEmpleado().getDni().equalsIgnoreCase(dni)){
+                empleado.getListaEmpleadosProyectos().remove(empleado.getListaEmpleadosProyectos().get(x));
+            }
+        }
+
+
+        System.out.println("Proyecto: " + proyectos.size());
+        if (!proyectos.isEmpty()){
+            System.out.println("El empleado es JEFE de uno o mas proyectos");
+            Empleado nuevoJefe = empleadoRepository.findEmpleadoByDni(Utilidades.pedirPalabra("Introduce el dni del nuevo jefe para esos proyectos"));
+
+            //Eliminamos la relacion     Empleado - jefe - Proyecto
+            for(int x = proyectos.size() -1 ; x >= 0 ; x--){
+                proyectos.get(x).setJefe(nuevoJefe);
+                proyectoRepository.update(proyectos.get(x));
+            }
+        }
+
         //Eliminamos la relacion     Empleado - realiza - Proyecto
-        for(int x = asignacionesEmpleado.size(); x >= 0; x--){
-            empleado.setListaEmpleadosProyectos(null);
+
+        for (int x = asignacionesEmpleado.size() -1; x >= 0; x--){
+            asignacionesEmpleado.remove(asignacionesEmpleado.get(x));
+        }
+
+        if (datosProfesionales != null){
+            datosProfesionalesRepository.remove(datosProfesionalesRepository.findByDni(dni));
+        }
+        empleadoRepository.remove(empleado);
+        }catch (NoResultException nre){
+            System.out.println("El dni introducido no existe");
         }
 
     }
@@ -365,58 +589,58 @@ public class Menu {
             BigDecimal sueldo = null;
             Empleado empleado= null;;
             String dni = Utilidades.pedirPalabra("Introduce el dni del empleado");
-            if (Validaciones.validarDNI(dni)){
-                String nombre = Utilidades.pedirPalabra("Introduce el nombre del empleado");
+            if (Validaciones.validarDNI(dni) && !dni.isEmpty()){
+                String nombre = Utilidades.pedirString("Introduce el nombre del empleado");
+                sc = new Scanner(System.in);
                 if (Validaciones.validarNombre(nombre)){
                     empleado = new Empleado(dni,nombre);
                     //Guardamos el empleado en la base de datos
                     empleadoRepository.crear(empleado);
-                }else {
+
+                    String ans = Utilidades.pedirPalabra("¿Es un empleado de plantilla? SI/NO");
+                    if (ans.equalsIgnoreCase("si")){
+                        do {
+                            System.out.println("Categorias: A | B | C | D");
+                            categoria= Utilidades.pedirPalabra("Introduce la categoria del empleado");
+                            if (!Validaciones.comprobarCategoria(categoria)){
+                                System.out.println("ERROR,La categoria introducida no existe!!!");
+                            }
+                        }while (!Validaciones.comprobarCategoria(categoria));
+
+                        do {
+                            sueldoStr = Utilidades.pedirPalabra("Introduce el sueldo del empleado");
+                            if (!Validaciones.comprobarSueldo(String.valueOf(sueldoStr))){
+                                System.out.println("ERROR, los decimales deben separarse por '.' [20000.4]!!!");
+                            }else {
+                                sueldo = BigDecimal.valueOf(Double.parseDouble(sueldoStr));
+                            }
+                        }while (!Validaciones.comprobarSueldo(String.valueOf(sueldoStr)));
+
+                        assert sueldo != null;
+                        DatosProfesionales datosProfesionales = new DatosProfesionales(empleado,sueldo, Categorias.valueOf(categoria));
+                        empleado.setDatosProfesionales(datosProfesionales);
+                        //Guardamos los datos profesionales
+                        datosProfesionalesRepository.crear(datosProfesionales);
+                        System.out.println("Se ha creado el empleado en plantilla con dni: " + empleado.getDni());
+                }else if (ans.equalsIgnoreCase("no")){
+                        System.out.println("Se ha creado el empleado con dni " + empleado.getDni());
+                    }else System.out.println("La opcion introducida no es correcta SI/NO");
+            }else {
                     System.out.println("-Máximo 35 caracteres");
                     System.out.println("-El nombre debe contener al menos 1 letra");
-                    crearEmpleadoOEmpleadoPlantilla();
+                    System.out.println("-El nombre no debe contener numeros");
                 }
-
             }else {
-                System.out.println("El DNI no es válido debe tener el siguiente formato: [12345678T]");
-                crearEmpleadoOEmpleadoPlantilla();
+                System.out.println("- ERROR AL INTRODUCIR LOS DATOS: ");
+                System.out.println("- El DNI deben tener el siguiente formato: [12345678A]");
+                System.out.println("- El DNI debe existir");
             }
-
-            String ans = Utilidades.pedirPalabra("¿Es un empleado de plantilla? SI/NO");
-            if (ans.equalsIgnoreCase("si")){
-                do {
-                    System.out.println("Categorias: A | B | C | D");
-                    categoria= Utilidades.pedirPalabra("Introduce la categoria del empleado");
-                    if (!Validaciones.comprobarCategoria(categoria)){
-                        System.out.println("La categoria introducida no existe");
-                    }
-                }while (!Validaciones.comprobarCategoria(categoria));
-
-                do {
-                    sueldoStr = Utilidades.pedirPalabra("Introduce el sueldo del empleado");
-                    if (!Validaciones.comprobarSueldo(String.valueOf(sueldoStr))){
-                        System.out.println("Los decimales deben separarse por '.' [20000.4]");
-                    }else {
-                        sueldo = BigDecimal.valueOf(Double.parseDouble(sueldoStr));
-                    }
-                }while (!Validaciones.comprobarSueldo(String.valueOf(sueldoStr)));
-
-
-                DatosProfesionales datosProfesionales = new DatosProfesionales(empleado,sueldo, Categorias.valueOf(categoria));
-                empleado.setDatosProfesionales(datosProfesionales);
-                //Guardamos los datos profesionales
-                datosProfesionalesRepository.crear(datosProfesionales);
-
-                System.out.println("Se ha creado el empleado en plantilla con dni: " + empleado.getDni());
-            }else System.out.println("Se ha creado, el empleado con dni: " + empleado.getDni() + ",no esta en la plantilla");
 
         }catch (ConstraintViolationException | EntityExistsException cve){
             System.out.println("Ese dni ya esta registrado");
-            crearEmpleadoOEmpleadoPlantilla();
         }catch (InputMismatchException ime){
             System.out.println("El dato introducido no es correcto");
             System.out.println("Los valores decimales deben ir separados por '.' [20000.4]");
-            crearEmpleadoOEmpleadoPlantilla();
         }catch (NoResultException nre){
             System.out.println("El DNI no existe");
         }
