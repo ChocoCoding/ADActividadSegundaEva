@@ -11,17 +11,20 @@ import java.util.Date;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"empleado","proyecto"})
 @NoArgsConstructor
 public class EmpleadoProyecto {
 
     @ManyToOne
     @Id
     @JoinColumn(name = "dni_emp")
+    @NonNull
     private Empleado empleado;
 
     @ManyToOne
     @Id
     @JoinColumn(name = "id_proyecto")
+    @NonNull
     private Proyecto proyecto;
 
     @Id
@@ -29,7 +32,7 @@ public class EmpleadoProyecto {
     @NonNull
     private LocalDate fechaInicio;
 
-    @NonNull
+
     @Column(name = "fecha_fin")
     private LocalDate fechaFin;
 

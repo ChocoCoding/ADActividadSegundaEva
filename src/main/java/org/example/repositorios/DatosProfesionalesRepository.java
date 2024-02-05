@@ -34,6 +34,7 @@ public class DatosProfesionalesRepository implements CRUD<DatosProfesionales>{
         trx.commit();
     }
 
+
     @Override
     public List<DatosProfesionales> findAll() {
         Transaction trx = this.session.beginTransaction();
@@ -41,6 +42,14 @@ public class DatosProfesionalesRepository implements CRUD<DatosProfesionales>{
         trx.commit();
         return datosProfesionales;
     }
+
+    public DatosProfesionales findByDni(String dni){
+        Transaction trx = session.beginTransaction();
+        DatosProfesionales dp = (DatosProfesionales) session.createQuery("SELECT dp FROM DatosProfesionales dp WHERE dp.empleadoPlantilla.dni =: dni").setParameter("dni",dni).getSingleResult();
+        trx.commit();
+        return dp;
+    }
+
 
 
 
